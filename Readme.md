@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг»
 
 * Студент: [Павел Мареев](https://up.htmlacademy.ru/javascript/22/user/1343135).
-* Наставник: `Неизвестно`.
+* Наставник: [Виктор Кан](https://htmlacademy.ru/profile/viktorkan).
 
 ---
 
