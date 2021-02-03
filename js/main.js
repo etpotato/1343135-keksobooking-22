@@ -4,7 +4,7 @@ function getIntegerFromRange(min, max) {
     return Math.round((Math.random() * (max - min)) + min);
   }
 
-  return 'Задан неверный диапазон';
+  throw new Error ('Invalid range');
 }
 
 getIntegerFromRange(1, 10);
@@ -15,7 +15,7 @@ function getNumberFromRange(min, max, digits) {
     return ((Math.random() * (max - min)) + min).toFixed(digits);
   }
 
-  return 'Задан неверный диапазон';
+  throw new Error ('Invalid range');
 }
 
 getNumberFromRange(1, 10, 3);
