@@ -1,20 +1,20 @@
-function getIntegerFromRange(min, max) {
+const getIntegerFromRange = (min, max) => {
 
   if (min >= 0 && max >= 1 && min < max) {
     return Math.round((Math.random() * (max - min)) + min);
   }
 
   throw new Error ('Invalid range');
-}
+};
 
-function getNumberFromRange(min, max, digits) {
+const getNumberFromRange = (min, max, digits) => {
 
   if (min >= 0 && max > min) {
     return ((Math.random() * (max - min)) + min).toFixed(digits);
   }
 
   throw new Error ('Invalid range');
-}
+};
 
 const POSTERS_NUMBER = 10;
 const AVATAR_NUMBERS = new Array(8).fill(null)
@@ -37,11 +37,9 @@ const LOCATION_Y_MIN = 139.70000;
 const LOCATION_Y_MAX = 139.80000;
 const LOCATION_DIGITS = 5;
 
-function getRandomArrayElement(array) {
-  return array[getIntegerFromRange(0, array.length - 1)];
-}
+const getRandomArrayElement = (array) => array[getIntegerFromRange(0, array.length - 1)];
 
-function getRandomArray(parentArray) {
+const getRandomArray = (parentArray) => {
   const randomArray = new Array(getIntegerFromRange(1, parentArray.length))
     .fill('')
     .reduce((accumulator, currentValue, index) => {
@@ -55,9 +53,9 @@ function getRandomArray(parentArray) {
       return accumulator;
     }, []);
   return randomArray;
-}
+};
 
-function createPoster() {
+const createPoster = () => {
   const locationX = getNumberFromRange(LOCATION_X_MIN, LOCATION_X_MAX, LOCATION_DIGITS);
   const locationY = getNumberFromRange(LOCATION_Y_MIN, LOCATION_Y_MAX, LOCATION_DIGITS);
 
@@ -83,10 +81,8 @@ function createPoster() {
       y: locationY,
     },
   }
-}
+};
 
-function getSimilarPosters() {
-  return new Array(POSTERS_NUMBER).fill(null).map(() => createPoster());
-}
+const getSimilarPosters = () => new Array(POSTERS_NUMBER).fill(null).map(() => createPoster());
 
 getSimilarPosters();
