@@ -1,28 +1,23 @@
 import { getSimilarPosters } from './data.js';
 
-const template = document.querySelector('#card').content;
-const fragment = document.createDocumentFragment();
 const mapCanvas = document.querySelector('#map-canvas');
-const similarPosters = getSimilarPosters(10);
-const getOfferType = (type) => {
-  switch (type) {
-    case 'flat':
-      return 'Квартира';
-    case 'bungalow':
-      return 'Бунгало';
-    case 'house':
-      return 'Дом';
-    case 'palace':
-      return 'Дворец';
-    default:
-      return 'Не установлено';
-  }
+const similarPosters = getSimilarPosters(1);
+
+const PlaceType = {
+  flat: 'Квартира',
+  bungalow: 'Бунгало',
+  house: 'Дом',
+  palace: 'Дворец',
 };
 
-const removeEmptyElement = (element) => {
-  if (!element.childNodes.length) {
-    element.remove();
-  }
+const renderFeatures = (container, features) => {
+  container.innerHTML = '';
+  features.forEach((feature) => {
+    const listItem = document.createElement('li');
+    listItem.classList.add('popup__feature', `popup__feature--${feature}`);
+    listItem.textContent = feature;
+    container.appendChild(listItem);
+  });
 };
 
 const renderImages = (container, imageSources) => {
@@ -38,26 +33,23 @@ const renderImages = (container, imageSources) => {
   });
 };
 
-similarPosters.forEach((poster) => {
-  const card = template.cloneNode(true);
+const makeCard = (poster) => {
+  const card = document.querySelector('#card').content.cloneNode(true);
   card.querySelector('.popup__title').textContent = poster.offer.title;
   card.querySelector('.popup__text--address').textContent = poster.offer.address;
   card.querySelector('.popup__text--price').innerHTML = `${poster.offer.price} ₽/ночь`;
-  card.querySelector('.popup__type').textContent = getOfferType(poster.offer.type);
+  card.querySelector('.popup__type').textContent = PlaceType[poster.offer.type];
   card.querySelector('.popup__text--capacity').textContent = `${poster.offer.rooms} комнаты для ${poster.offer.guests} гостей`;
   card.querySelector('.popup__text--time').textContent = `Заезд после ${poster.offer.checkin}, выезд до ${poster.offer.checkout}`;
-  poster.offer.features.forEach((feature) => {
-    card.querySelectorAll('.popup__feature').forEach((listItem) => {
-      if (listItem.className.includes(feature)) {
-        listItem.textContent = feature;
-      }
-    });
-  });
-  card.querySelectorAll('.popup__feature').forEach((element) => removeEmptyElement(element));
+  renderFeatures(card.querySelector('.popup__features'), poster.offer.features);
   card.querySelector('.popup__description').textContent = poster.offer.description;
   renderImages(card.querySelector('.popup__photos'), poster.offer.photos);
   card.querySelector('.popup__avatar').src = poster.author.avatar;
-  fragment.appendChild(card);
-});
+  return card;
+};
 
-mapCanvas.appendChild(fragment.querySelector(':first-child'));
+const renderCard = (container, card) => {
+  container.appendChild(card);
+};
+
+renderCard(mapCanvas, makeCard(similarPosters[0]));
