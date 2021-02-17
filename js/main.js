@@ -1,3 +1,1 @@
-import { getSimilarPosters } from './data.js';
-
-getSimilarPosters(10);
+import './similar-poster.js';
