@@ -40,6 +40,12 @@ const makeCard = (poster) => {
   card.querySelector('.popup__description').textContent = poster.offer.description;
   renderImages(card.querySelector('.popup__photos'), poster.offer.photos);
   card.querySelector('.popup__avatar').src = poster.author.avatar;
+  card.querySelectorAll('*').forEach((item) => {
+    if (item.children.lenght === 0) {
+      item.remove();
+    }
+  });
+
   return card;
 };
 

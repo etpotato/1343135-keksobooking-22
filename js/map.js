@@ -1,25 +1,49 @@
 /* eslint-disable no-undef */
-import { inactivateForms } from './inactiveState.js';
-import { activateForms } from './activeState.js';
 import { data } from './data.js';
 import { makeCard } from './similar-poster.js';
 
 const DEFAULT_COORDINATES = {lat: 35.6762, lng: 139.6503};
 const FLOATING_POINT_DIGITS = 5;
 
+const addressInput = document.querySelector('#address');
+
+const inactivateForms = () => {
+  const adForm = document.querySelector('.ad-form');
+  const adFormFieldsets = adForm.querySelectorAll('fieldset');
+  const filtersForm = document.querySelector('.map__filters');
+  const filterFormInputs = filtersForm.childNodes;
+
+  adForm.classList.add('ad-form--disabled');
+  adFormFieldsets.forEach((fieldset) => fieldset.disabled = true);
+
+  filtersForm.classList.add('map__filters--disabled');
+  filterFormInputs.forEach((fieldset) => fieldset.disabled = true);
+};
 inactivateForms();
 
-const mapElem = document.createElement('div');
-mapElem.style.height = '100%';
-mapElem.id = 'map';
-document.querySelector('#map-canvas').prepend(mapElem);
+const activateForms = () => {
+  const adForm = document.querySelector('.ad-form');
+  const adFormFieldsets = adForm.querySelectorAll('fieldset');
+  const filtersForm = document.querySelector('.map__filters');
+  const filterFormInputs = filtersForm.childNodes;
+
+  adForm.classList.remove('ad-form--disabled');
+  adFormFieldsets.forEach((fieldset) => fieldset.disabled = false);
+
+  filtersForm.classList.remove('map__filters--disabled');
+  filterFormInputs.forEach((fieldset) => fieldset.disabled = false);
+};
 
 const formatCoordinates = (coordinates) => {
   return `${coordinates.lat.toFixed(FLOATING_POINT_DIGITS)}, ${coordinates.lng.toFixed(FLOATING_POINT_DIGITS)}`
 };
 
-const map = L.map('map')
-  .addEventListener('load', () => activateForms())
+const map = L.map('map-canvas')
+  .addEventListener('load', () => {
+    activateForms();
+    addressInput.value = formatCoordinates(DEFAULT_COORDINATES);
+    addressInput.readOnly = true;
+  })
   .setView(
     DEFAULT_COORDINATES,
     12,
@@ -47,10 +71,6 @@ const mainMarker = L.marker(DEFAULT_COORDINATES, {
   .addEventListener('drag', () => {
     addressInput.value = formatCoordinates(mainMarker.getLatLng());
   });
-
-const addressInput = document.querySelector('#address');
-addressInput.value = formatCoordinates(DEFAULT_COORDINATES);
-addressInput.readOnly = true;
 
 const ordinaryPin = L.icon({
   iconUrl: '../img/pin.svg',
