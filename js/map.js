@@ -58,7 +58,7 @@ L.tileLayer(
 L.control.scale().addTo(map);
 
 const mainPin = L.icon({
-  iconUrl: '../img/main-pin.svg',
+  iconUrl: '/img/main-pin.svg',
   iconSize: [50, 50],
   iconAnchor: [25, 50],
 });
@@ -73,7 +73,7 @@ const mainMarker = L.marker(DEFAULT_COORDINATES, {
   });
 
 const ordinaryPin = L.icon({
-  iconUrl: '../img/pin.svg',
+  iconUrl: '/img/pin.svg',
   iconSize: [42, 42],
   iconAnchor: [21, 42],
 });
