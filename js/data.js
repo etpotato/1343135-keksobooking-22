@@ -1,5 +1,6 @@
 import { getIntegerFromRange, getNumberFromRange } from './util.js';
 
+const POSTERS_NUMBER = 10;
 const AVATAR_NUMBERS = new Array(8).fill(null)
   .map((avatarNumber, index) => avatarNumber = `0${index + 1}`);
 
@@ -69,5 +70,5 @@ const createPoster = () => {
 const getSimilarPosters = (postersNumber) => {
   return new Array(postersNumber).fill(null).map(() => createPoster())
 };
-
-export { getSimilarPosters };
+const data = getSimilarPosters(POSTERS_NUMBER);
+export { data };

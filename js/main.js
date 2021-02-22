@@ -1,1 +1,1 @@
-import './similar-poster.js';
+import './map.js';

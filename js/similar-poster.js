@@ -1,8 +1,3 @@
-import { getSimilarPosters } from './data.js';
-
-const mapCanvas = document.querySelector('#map-canvas');
-const similarPosters = getSimilarPosters(1);
-
 const PlaceType = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
@@ -34,7 +29,7 @@ const renderImages = (container, imageSources) => {
 };
 
 const makeCard = (poster) => {
-  const card = document.querySelector('#card').content.cloneNode(true);
+  const card = document.querySelector('#card').content.querySelector('.popup').cloneNode(true);
   card.querySelector('.popup__title').textContent = poster.offer.title;
   card.querySelector('.popup__text--address').textContent = poster.offer.address;
   card.querySelector('.popup__text--price').innerHTML = `${poster.offer.price} ₽/ночь`;
@@ -45,11 +40,13 @@ const makeCard = (poster) => {
   card.querySelector('.popup__description').textContent = poster.offer.description;
   renderImages(card.querySelector('.popup__photos'), poster.offer.photos);
   card.querySelector('.popup__avatar').src = poster.author.avatar;
+  card.querySelectorAll('*').forEach((item) => {
+    if (item.children.lenght === 0) {
+      item.remove();
+    }
+  });
+
   return card;
 };
 
-const renderCard = (container, card) => {
-  container.appendChild(card);
-};
-
-renderCard(mapCanvas, makeCard(similarPosters[0]));
+export { makeCard };
