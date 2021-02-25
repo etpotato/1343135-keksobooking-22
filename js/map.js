@@ -1,9 +1,10 @@
 /* eslint-disable no-undef */
-import { data } from './data.js';
 import { makeCard } from './similar-poster.js';
+import { getData } from './data.js';
 
 const DEFAULT_COORDINATES = {lat: 35.6762, lng: 139.6503};
 const FLOATING_POINT_DIGITS = 5;
+const SERVER_ADDRESS = 'https://2.javascript.pages.academy/keksobooking/data';
 
 const addressInput = document.querySelector('#address');
 
@@ -46,7 +47,7 @@ const map = L.map('map-canvas')
   })
   .setView(
     DEFAULT_COORDINATES,
-    12,
+    10,
   );
 
 L.tileLayer(
@@ -80,7 +81,7 @@ const ordinaryPin = L.icon({
 
 const renderOrdinaryMarker = (poster) => {
   const popupContent = makeCard(poster);
-  L.marker({lat: poster.location.x, lng: poster.location.y}, {
+  L.marker({lat: poster.location.lat, lng: poster.location.lng}, {
     icon: ordinaryPin,
   }).bindPopup(popupContent, {
     keepInView: true,
@@ -95,4 +96,22 @@ const renderOrdinaryMarkers = (data) => {
   });
 };
 
-renderOrdinaryMarkers(data);
+const showError = () => {
+  const popup = document.createElement('div');
+  popup.textContent = 'Ошибка загрузки объявлений! Попробуйте обновить страницу.';
+  popup.style.zIndex = 100;
+  popup.style.position = 'fixed';
+  popup.style.bottom = 0;
+  popup.style.left = 0;
+  popup.style.right = 0;
+  popup.style.padding = '20px';
+  popup.style.fontSize = '20px';
+  popup.style.fontWeight = 'bold';
+  popup.style.textAlign = 'center';
+  popup.style.backgroundColor = 'tomato';
+  document.body.append(popup);
+
+  setTimeout(() => popup.remove(), 5000);
+};
+
+getData(SERVER_ADDRESS, renderOrdinaryMarkers, showError);
