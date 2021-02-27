@@ -4,16 +4,14 @@ import { getData } from './data.js';
 
 const DEFAULT_COORDINATES = {lat: 35.6762, lng: 139.6503};
 const FLOATING_POINT_DIGITS = 5;
-const SERVER_ADDRESS = 'https://2.javascript.pages.academy/keksobooking/data';
 
-const addressInput = document.querySelector('#address');
+const adForm = document.querySelector('.ad-form');
+const adFormFieldsets = adForm.querySelectorAll('fieldset');
+const addressInput = adForm.querySelector('#address');
+const filtersForm = document.querySelector('.map__filters');
+const filterFormInputs = filtersForm.childNodes;
 
 const inactivateForms = () => {
-  const adForm = document.querySelector('.ad-form');
-  const adFormFieldsets = adForm.querySelectorAll('fieldset');
-  const filtersForm = document.querySelector('.map__filters');
-  const filterFormInputs = filtersForm.childNodes;
-
   adForm.classList.add('ad-form--disabled');
   adFormFieldsets.forEach((fieldset) => fieldset.disabled = true);
 
@@ -23,11 +21,6 @@ const inactivateForms = () => {
 inactivateForms();
 
 const activateForms = () => {
-  const adForm = document.querySelector('.ad-form');
-  const adFormFieldsets = adForm.querySelectorAll('fieldset');
-  const filtersForm = document.querySelector('.map__filters');
-  const filterFormInputs = filtersForm.childNodes;
-
   adForm.classList.remove('ad-form--disabled');
   adFormFieldsets.forEach((fieldset) => fieldset.disabled = false);
 
@@ -114,4 +107,11 @@ const showError = () => {
   setTimeout(() => popup.remove(), 5000);
 };
 
-getData(SERVER_ADDRESS, renderOrdinaryMarkers, showError);
+const resetMap = () => {
+  mainMarker.setLatLng(DEFAULT_COORDINATES);
+  addressInput.value = formatCoordinates(mainMarker.getLatLng());
+};
+
+getData(renderOrdinaryMarkers, showError);
+
+export { resetMap };
