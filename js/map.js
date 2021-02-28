@@ -10,6 +10,7 @@ const adFormFieldsets = adForm.querySelectorAll('fieldset');
 const addressInput = adForm.querySelector('#address');
 const filtersForm = document.querySelector('.map__filters');
 const filterFormInputs = filtersForm.childNodes;
+const mapElem = document.querySelector('#map-canvas');
 
 const inactivateForms = () => {
   adForm.classList.add('ad-form--disabled');
@@ -32,11 +33,12 @@ const formatCoordinates = (coordinates) => {
   return `${coordinates.lat.toFixed(FLOATING_POINT_DIGITS)}, ${coordinates.lng.toFixed(FLOATING_POINT_DIGITS)}`
 };
 
-const map = L.map('map-canvas')
+const map = L.map(mapElem)
   .addEventListener('load', () => {
     activateForms();
     addressInput.value = formatCoordinates(DEFAULT_COORDINATES);
     addressInput.readOnly = true;
+    mapElem.style.zIndex = 0;
   })
   .setView(
     DEFAULT_COORDINATES,
