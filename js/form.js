@@ -1,6 +1,9 @@
 import { isEsc } from './util.js';
+import { resetMap } from './map.js';
+import { sendData } from './data.js';
 
 const adForm = document.querySelector('.ad-form');
+const resetButton = adForm.querySelector('.ad-form__reset');
 
 const onEscSuccessPopup = (evt) => {
   if (isEsc(evt)) {
@@ -47,7 +50,6 @@ const closeSuccessPopup = () => {
   successPopup.remove();
 };
 
-
 const openErrorPopup = () => {
   const errorPopup = document
     .querySelector('#error')
@@ -72,14 +74,25 @@ const closeErrorPopup = () => {
   errorPopup.remove();
 };
 
-const onSuccessSubmit = (cb) => {
+const onSuccessSubmit = () => {
   openSuccessPopup();
   adForm.reset();
-  cb();
+  resetMap();
 };
 
 const onErrorSubmit = () => {
   openErrorPopup();
 };
 
-export { onSuccessSubmit, onErrorSubmit };
+adForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  if (adForm.reportValidity()) {
+    sendData(new FormData(evt.target), onSuccessSubmit, onErrorSubmit);
+  }
+});
+
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  adForm.reset();
+  resetMap();
+});

@@ -6,8 +6,8 @@ const getData = (onSuccess, onError) => {
       }
       throw new Error(`${responce.status} ${responce.statusText}`);
     })
-    .then(json => onSuccess(json))
-    .catch((error) => onError(error));
+    .then(onSuccess)
+    .catch(onError);
 };
 
 const sendData = (data, onSuccess, onError) => {
@@ -19,12 +19,11 @@ const sendData = (data, onSuccess, onError) => {
     })
     .then((responce) => {
       if (responce.ok) {
-        () => onSuccess;
-      } else {
-        throw new Error(`${responce.status} ${responce.statusText}`);
+        return onSuccess();
       }
+      throw new Error(`${responce.status} ${responce.statusText}`);
     })
-    .catch(() => onError());
+    .catch(onError);
 };
 
 export { getData, sendData };
