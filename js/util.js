@@ -16,4 +16,8 @@ const getNumberFromRange = (min, max, digits) => {
   throw new Error ('Invalid range');
 };
 
-export { getIntegerFromRange, getNumberFromRange };
+const isEsc = (evt) => {
+  return evt.key === ('Escape' || 'Esc');
+};
+
+export { getIntegerFromRange, getNumberFromRange, isEsc };
