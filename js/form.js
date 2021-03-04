@@ -3,7 +3,75 @@ import { resetMap } from './map.js';
 import { sendData } from './data.js';
 
 const adForm = document.querySelector('.ad-form');
+const housingTypeInput = adForm.querySelector('#type');
+const priceInput = adForm.querySelector('#price');
+const timeInInput = adForm.querySelector('#timein');
+const timeOutInput = adForm.querySelector('#timeout');
+const roomNumberInput = adForm.querySelector('#room_number');
+const capacityInput = adForm.querySelector('#capacity');
 const resetButton = adForm.querySelector('.ad-form__reset');
+
+const HousingTypePrice = {
+  palace: 10000,
+  flat: 1000,
+  house: 5000,
+  bungalow: 0,
+};
+
+const onHousingTypeChange = () => {
+  const minPrice = HousingTypePrice[housingTypeInput.value];
+  priceInput.placeholder = minPrice;
+  priceInput.min = minPrice;
+};
+
+housingTypeInput.addEventListener('change', () => onHousingTypeChange());
+
+const onTimeInChange = () => {
+  const time = timeInInput.value;
+  timeOutInput.value = time;
+};
+
+const onTimeOutChange = () => {
+  const time = timeOutInput.value;
+  timeInInput.value = time;
+};
+
+timeInInput.addEventListener('change', () => onTimeInChange());
+timeOutInput.addEventListener('change', () => onTimeOutChange());
+
+const onRoomNumberChange = () => {
+  const roomNumber = Number.parseInt(roomNumberInput.value);
+  const capasityOptions = capacityInput.querySelectorAll('option');
+
+  if (roomNumber === 100) {
+    capasityOptions.forEach((capacityOption) => {
+      const capacityValue = Number.parseInt(capacityOption.value);
+
+      if (capacityValue === 0) {
+        capacityOption.disabled = false;
+        return capacityOption.selected = true;
+      }
+
+      capacityOption.disabled = true;
+    });
+  } else {
+    capasityOptions.forEach((capacityOption) => {
+      const capacityValue = Number.parseInt(capacityOption.value);
+
+      if (capacityValue > roomNumber || capacityValue === 0) {
+        return capacityOption.disabled = true;
+      }
+
+      capacityOption.disabled = false;
+
+      if (capacityValue === roomNumber) {
+        capacityOption.selected = true;
+      }
+    });
+  }
+};
+
+roomNumberInput.addEventListener('change', () => onRoomNumberChange());
 
 const onEscSuccessPopup = (evt) => {
   if (isEsc(evt)) {
