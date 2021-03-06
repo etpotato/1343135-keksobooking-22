@@ -1,8 +1,10 @@
+/* eslint-disable no-undef */
 import { isEsc } from './util.js';
 import { resetMap } from './map.js';
 import { sendData } from './data.js';
 
 const adForm = document.querySelector('.ad-form');
+const titleInput = adForm.querySelector('#title');
 const housingTypeInput = adForm.querySelector('#type');
 const priceInput = adForm.querySelector('#price');
 const timeInInput = adForm.querySelector('#timein');
@@ -10,6 +12,8 @@ const timeOutInput = adForm.querySelector('#timeout');
 const roomNumberInput = adForm.querySelector('#room_number');
 const capacityInput = adForm.querySelector('#capacity');
 const resetButton = adForm.querySelector('.ad-form__reset');
+
+// логика полей формы
 
 const HousingTypePrice = {
   palace: 10000,
@@ -72,6 +76,61 @@ const onRoomNumberChange = () => {
 };
 
 roomNumberInput.addEventListener('change', () => onRoomNumberChange());
+
+// валидация формы
+
+const VALIDATION_DELAY = 1000;
+
+const setInvalidStyle = (element) => {
+  return element.style.backgroundColor = 'salmon';
+};
+
+const resetInvalidStyle = (element) => {
+  return element.style.backgroundColor = 'white';
+};
+
+const validateTitle = () => {
+  const valueLength = titleInput.value.length;
+  const minLength = Number.parseInt(titleInput.minLength);
+  const maxLength = Number.parseInt(titleInput.maxLength);
+
+  if (titleInput.validity.tooShort) {
+    titleInput.setCustomValidity(`Введите ещё ${minLength - valueLength} симв.`);
+    setInvalidStyle(titleInput);
+  } else if (titleInput.validity.tooLong) {
+    titleInput.setCustomValidity(`Удалите ${valueLength - maxLength} симв.`);
+    setInvalidStyle(titleInput);
+  } else {
+    titleInput.setCustomValidity('');
+    resetInvalidStyle(titleInput);
+  }
+
+  titleInput.reportValidity();
+};
+
+titleInput.addEventListener('input', _.debounce(validateTitle, VALIDATION_DELAY));
+
+const validatePrice = () => {
+  const minValue = priceInput.min;
+  const maxValue = priceInput.max;
+
+  if (priceInput.validity.rangeUnderflow) {
+    priceInput.setCustomValidity(`Минимальная цена - ${minValue} руб.`);
+    setInvalidStyle(priceInput);
+  } else if (priceInput.validity.rangeOverflow) {
+    priceInput.setCustomValidity(`Максимальная цена - ${maxValue} руб.`);
+    setInvalidStyle(priceInput);
+  } else {
+    resetInvalidStyle(priceInput);
+    priceInput.setCustomValidity('');
+  }
+
+  priceInput.reportValidity();
+};
+
+priceInput.addEventListener('input', _.debounce(validatePrice, VALIDATION_DELAY));
+
+// отправка формы
 
 const onEscSuccessPopup = (evt) => {
   if (isEsc(evt)) {
