@@ -4,6 +4,7 @@ import { getData } from './data.js';
 
 const DEFAULT_COORDINATES = {lat: 35.6762, lng: 139.6503};
 const FLOATING_POINT_DIGITS = 5;
+const NUMBER_OF_POSTERS = 10;
 
 const adForm = document.querySelector('.ad-form');
 const adFormFieldsets = adForm.querySelectorAll('fieldset');
@@ -34,12 +35,13 @@ const formatCoordinates = (coordinates) => {
 };
 
 const map = L.map(mapElem)
-  .addEventListener('load', () => {
+  .addEventListener('load', () => setTimeout(() => {
     activateForms();
     addressInput.value = formatCoordinates(DEFAULT_COORDINATES);
     addressInput.readOnly = true;
     mapElem.style.zIndex = 0;
-  })
+    getData(renderOrdinaryMarkers, showError);
+  }, 0))
   .setView(
     DEFAULT_COORDINATES,
     10,
@@ -51,6 +53,7 @@ L.tileLayer(
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
 ).addTo(map);
+
 L.control.scale().addTo(map);
 
 const mainPin = L.icon({
@@ -86,7 +89,7 @@ const renderOrdinaryMarker = (poster) => {
 };
 
 const renderOrdinaryMarkers = (data) => {
-  data.forEach((poster) => {
+  data.slice(0, NUMBER_OF_POSTERS).forEach((poster) => {
     renderOrdinaryMarker(poster);
   });
 };
@@ -113,7 +116,5 @@ const resetMap = () => {
   mainMarker.setLatLng(DEFAULT_COORDINATES);
   addressInput.value = formatCoordinates(mainMarker.getLatLng());
 };
-
-getData(renderOrdinaryMarkers, showError);
 
 export { resetMap };
