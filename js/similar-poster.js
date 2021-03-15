@@ -1,4 +1,4 @@
-const PlaceType = {
+const placeType = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
   house: 'Дом',
@@ -33,7 +33,7 @@ const makeCard = (poster) => {
   card.querySelector('.popup__title').textContent = poster.offer.title;
   card.querySelector('.popup__text--address').textContent = poster.offer.address;
   card.querySelector('.popup__text--price').innerHTML = `${poster.offer.price} ₽/ночь`;
-  card.querySelector('.popup__type').textContent = PlaceType[poster.offer.type];
+  card.querySelector('.popup__type').textContent = placeType[poster.offer.type];
   card.querySelector('.popup__text--capacity').textContent = `${poster.offer.rooms} комнаты для ${poster.offer.guests} гостей`;
   card.querySelector('.popup__text--time').textContent = `Заезд после ${poster.offer.checkin}, выезд до ${poster.offer.checkout}`;
   renderFeatures(card.querySelector('.popup__features'), poster.offer.features);

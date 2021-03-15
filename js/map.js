@@ -5,6 +5,7 @@ import { getData } from './data.js';
 const DEFAULT_COORDINATES = {lat: 35.6762, lng: 139.6503};
 const FLOATING_POINT_DIGITS = 5;
 const NUMBER_OF_POSTERS = 10;
+const ERROR_MESSAGE_TIMEOUT = 5000;
 const THROTTLE_DELAY = 500;
 
 const adForm = document.querySelector('.ad-form');
@@ -142,7 +143,7 @@ const showError = () => {
   popup.style.backgroundColor = 'tomato';
   document.body.append(popup);
 
-  setTimeout(() => popup.remove(), 5000);
+  setTimeout(() => popup.remove(), ERROR_MESSAGE_TIMEOUT);
 };
 
 // Удалить активные маркеры с карты и очистить массив
@@ -174,14 +175,14 @@ const filterType = (poster) => {
 const filterPrice = (poster) => {
   const priceValue = priceFilter.value;
 
-  const isPriceCorrect = {
+  const isCorrectPrice = {
     low: poster.offer.price <= 10000,
     middle: poster.offer.price >= 10000 && poster.offer.price <= 50000,
     high: poster.offer.price >= 50000,
     any: true,
   };
 
-  return isPriceCorrect[priceValue];
+  return isCorrectPrice[priceValue];
 };
 
 const filterRooms = (poster) => {
