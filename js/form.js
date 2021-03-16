@@ -3,6 +3,9 @@ import { isEsc } from './util.js';
 import { resetMap } from './map.js';
 import { sendData } from './data.js';
 
+const RESET_PHOTO_TIMEOUT = 3000;
+const MAX_PHOTO_SIZE = 2000000;
+
 const adForm = document.querySelector('.ad-form');
 const titleInput = adForm.querySelector('#title');
 const housingTypeInput = adForm.querySelector('#type');
@@ -10,12 +13,18 @@ const priceInput = adForm.querySelector('#price');
 const timeInInput = adForm.querySelector('#timein');
 const timeOutInput = adForm.querySelector('#timeout');
 const roomNumberInput = adForm.querySelector('#room_number');
-const capacityInput = adForm.querySelector('#capacity');
+const capasityOptions = adForm.querySelectorAll('#capacity option');
+const avatarInput = adForm.querySelector('#avatar');
+const avatarDropZone = adForm.querySelector('#avatar ~ .ad-form-header__drop-zone');
+const avatarPreview = adForm.querySelector('.ad-form-header__preview img');
+const photoInput = adForm.querySelector('#images');
+const photoDropZone = adForm.querySelector('.ad-form__drop-zone');
+const photoContainer = adForm.querySelector('.ad-form__photo-container');
 const resetButton = adForm.querySelector('.ad-form__reset');
 
 // логика полей формы
 
-const HousingTypePrice = {
+const housingTypePrice = {
   palace: 10000,
   flat: 1000,
   house: 5000,
@@ -23,7 +32,7 @@ const HousingTypePrice = {
 };
 
 const onHousingTypeChange = () => {
-  const minPrice = HousingTypePrice[housingTypeInput.value];
+  const minPrice = housingTypePrice[housingTypeInput.value];
   priceInput.placeholder = minPrice;
   priceInput.min = minPrice;
 };
@@ -45,7 +54,6 @@ timeOutInput.addEventListener('change', () => onTimeOutChange());
 
 const onRoomNumberChange = () => {
   const roomNumber = Number.parseInt(roomNumberInput.value);
-  const capasityOptions = capacityInput.querySelectorAll('option');
 
   if (roomNumber === 100) {
     capasityOptions.forEach((capacityOption) => {
@@ -77,22 +85,144 @@ const onRoomNumberChange = () => {
 
 roomNumberInput.addEventListener('change', () => onRoomNumberChange());
 
-// валидация формы
+// Загрузка изображений
 
-const VALIDATION_DELAY = 1000;
+const onAvatarChange = () => {
+  const avatarImage = avatarInput.files[0];
+
+  validateAvatar();
+
+  if (!avatarImage.type.startsWith('image/') || avatarImage.size > MAX_PHOTO_SIZE) {
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.addEventListener('load', () => {
+    avatarPreview.style.objectFit = 'cover';
+    avatarPreview.src = reader.result;
+  });
+
+  reader.readAsDataURL(avatarImage);
+};
+
+avatarInput.addEventListener('change', onAvatarChange);
+
+const onPhotoChange = () => {
+  const photoPreview = adForm.querySelector('.ad-form__photo');
+  const photoImages = Object.values(photoInput.files);
+
+  validatePhoto();
+
+  const isImage = photoImages.every((item) => item.type.startsWith('image/'));
+  const isSuitableSize = photoImages.every((item) => item.size <= MAX_PHOTO_SIZE);
+
+  if (!isImage || !isSuitableSize) {
+    return;
+  }
+
+  if (photoPreview.children.length === 0) {
+    photoPreview.remove();
+  }
+
+  photoImages.forEach((image) => {
+    const reader = new FileReader();
+
+    reader.addEventListener('load', () => {
+      const divElem = document.createElement('div');
+      divElem.classList.add('ad-form__photo');
+      const imageElem = document.createElement('img');
+      imageElem.width = '70';
+      imageElem.height = '70';
+      imageElem.style.objectFit = 'cover';
+      imageElem.src = reader.result;
+      divElem.append(imageElem);
+      photoContainer.append(divElem);
+    });
+
+    reader.readAsDataURL(image);
+  });
+};
+
+photoInput.addEventListener('change', onPhotoChange);
+
+const resetAvatarPreview = () => {
+  avatarPreview.src = 'img/muffin-grey.svg';
+};
+
+const resetPhotoPreview = () => {
+  const photos = Array.from(document.querySelectorAll('.ad-form__photo'));
+  photos.forEach((photo) => photo.remove());
+  const divElem = document.createElement('div');
+  divElem.classList.add('ad-form__photo');
+  photoContainer.append(divElem);
+};
+
+// валидация формы
 
 const setInvalidStyle = (element) => {
   return element.style.backgroundColor = 'salmon';
 };
 
 const resetInvalidStyle = (element) => {
-  return element.style.backgroundColor = 'white';
+  return element.removeAttribute('style');
 };
+
+const validateAvatar = () => {
+  const avatarImage = avatarInput.files[0];
+
+  if (!avatarImage.type.startsWith('image/')) {
+    avatarInput.setCustomValidity('Пожалуйста, выберите изображение.');
+    resetAvatarPreview();
+    setInvalidStyle(avatarDropZone);
+  } else if (avatarImage.size > MAX_PHOTO_SIZE) {
+    avatarInput.setCustomValidity('Размер изображения не должен превышать 2MB.');
+    resetAvatarPreview();
+    setInvalidStyle(avatarDropZone);
+  } else {
+    avatarInput.setCustomValidity('');
+    resetInvalidStyle(avatarDropZone);
+  }
+  avatarInput.reportValidity();
+};
+
+const onInvalidPhoto = () => {
+  setInvalidStyle(photoDropZone);
+  setTimeout(() => {
+    resetInvalidStyle(photoDropZone);
+    photoInput.setCustomValidity('');
+    photoInput.value = '';
+    resetPhotoPreview();
+  }, RESET_PHOTO_TIMEOUT);
+};
+
+const validatePhoto = () => {
+  const photoImages = Object.values(photoInput.files);
+
+  if (photoImages.length === 0) {
+    photoInput.setCustomValidity('');
+    resetInvalidStyle(photoDropZone);
+    return;
+  }
+
+  const isImage = photoImages.every((item) => item.type.startsWith('image/'));
+  const isSuitableSize = photoImages.every((item) => item.size <= MAX_PHOTO_SIZE);
+
+  if (!isImage) {
+    photoInput.setCustomValidity('Пожалуйста, выберите изображения.');
+    onInvalidPhoto();
+  } else if (!isSuitableSize) {
+    photoInput.setCustomValidity('Размер изображения не должен превышать 2MB.');
+    onInvalidPhoto();
+  }
+  photoInput.reportValidity();
+};
+
+const minLength = Number.parseInt(titleInput.minLength);
+const maxLength = Number.parseInt(titleInput.maxLength);
 
 const validateTitle = () => {
   const valueLength = titleInput.value.length;
-  const minLength = Number.parseInt(titleInput.minLength);
-  const maxLength = Number.parseInt(titleInput.maxLength);
 
   if (titleInput.validity.tooShort) {
     titleInput.setCustomValidity(`Введите ещё ${minLength - valueLength} симв.`);
@@ -108,12 +238,12 @@ const validateTitle = () => {
   titleInput.reportValidity();
 };
 
-titleInput.addEventListener('input', _.debounce(validateTitle, VALIDATION_DELAY));
+titleInput.addEventListener('input', validateTitle);
+
+const minValue = priceInput.min;
+const maxValue = priceInput.max;
 
 const validatePrice = () => {
-  const minValue = priceInput.min;
-  const maxValue = priceInput.max;
-
   if (priceInput.validity.rangeUnderflow) {
     priceInput.setCustomValidity(`Минимальная цена - ${minValue} руб.`);
     setInvalidStyle(priceInput);
@@ -128,7 +258,7 @@ const validatePrice = () => {
   priceInput.reportValidity();
 };
 
-priceInput.addEventListener('input', _.debounce(validatePrice, VALIDATION_DELAY));
+priceInput.addEventListener('input', validatePrice);
 
 // отправка формы
 
@@ -205,6 +335,8 @@ const onSuccessSubmit = () => {
   openSuccessPopup();
   adForm.reset();
   resetMap();
+  resetAvatarPreview();
+  resetPhotoPreview();
 };
 
 const onErrorSubmit = () => {
@@ -213,13 +345,13 @@ const onErrorSubmit = () => {
 
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  if (adForm.reportValidity()) {
-    sendData(new FormData(evt.target), onSuccessSubmit, onErrorSubmit);
-  }
+  sendData(new FormData(evt.target), onSuccessSubmit, onErrorSubmit);
 });
 
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   adForm.reset();
   resetMap();
+  resetAvatarPreview();
+  resetPhotoPreview();
 });
