@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import _ from 'lodash';
 import { makeCard } from './similar-poster.js';
 import { getData } from './data.js';
 
