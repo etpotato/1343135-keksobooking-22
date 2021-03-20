@@ -32,7 +32,7 @@ const makeCard = (poster) => {
   const card = document.querySelector('#card').content.querySelector('.popup').cloneNode(true);
   card.querySelector('.popup__title').textContent = poster.offer.title;
   card.querySelector('.popup__text--address').textContent = poster.offer.address;
-  card.querySelector('.popup__text--price').innerHTML = `${poster.offer.price} ₽/ночь`;
+  card.querySelector('.popup__text--price').textContent = `${poster.offer.price} ₽/ночь`;
   card.querySelector('.popup__type').textContent = placeType[poster.offer.type];
   card.querySelector('.popup__text--capacity').textContent = `${poster.offer.rooms} комнаты для ${poster.offer.guests} гостей`;
   card.querySelector('.popup__text--time').textContent = `Заезд после ${poster.offer.checkin}, выезд до ${poster.offer.checkout}`;
