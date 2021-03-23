@@ -5,6 +5,7 @@ import { sendData } from './data.js';
 
 const RESET_PHOTO_TIMEOUT = 3000;
 const MAX_PHOTO_SIZE = 2000000;
+const PREVIEW_PLACEHOLDER = 'img/muffin-grey.svg';
 
 const adForm = document.querySelector('.ad-form');
 const titleInput = adForm.querySelector('#title');
@@ -22,8 +23,6 @@ const photoDropZone = adForm.querySelector('.ad-form__drop-zone');
 const photoContainer = adForm.querySelector('.ad-form__photo-container');
 const resetButton = adForm.querySelector('.ad-form__reset');
 
-// логика полей формы
-
 const housingTypePrice = {
   palace: 10000,
   flat: 1000,
@@ -37,8 +36,6 @@ const onHousingTypeChange = () => {
   priceInput.min = minPrice;
 };
 
-housingTypeInput.addEventListener('change', () => onHousingTypeChange());
-
 const onTimeInChange = () => {
   const time = timeInInput.value;
   timeOutInput.value = time;
@@ -48,9 +45,6 @@ const onTimeOutChange = () => {
   const time = timeOutInput.value;
   timeInInput.value = time;
 };
-
-timeInInput.addEventListener('change', () => onTimeInChange());
-timeOutInput.addEventListener('change', () => onTimeOutChange());
 
 const onRoomNumberChange = () => {
   const roomNumber = Number.parseInt(roomNumberInput.value);
@@ -83,10 +77,6 @@ const onRoomNumberChange = () => {
   }
 };
 
-roomNumberInput.addEventListener('change', () => onRoomNumberChange());
-
-// Загрузка изображений
-
 const onAvatarChange = () => {
   const avatarImage = avatarInput.files[0];
 
@@ -105,8 +95,6 @@ const onAvatarChange = () => {
 
   reader.readAsDataURL(avatarImage);
 };
-
-avatarInput.addEventListener('change', onAvatarChange);
 
 const onPhotoChange = () => {
   const photoPreview = adForm.querySelector('.ad-form__photo');
@@ -144,10 +132,8 @@ const onPhotoChange = () => {
   });
 };
 
-photoInput.addEventListener('change', onPhotoChange);
-
 const resetAvatarPreview = () => {
-  avatarPreview.src = 'img/muffin-grey.svg';
+  avatarPreview.src = PREVIEW_PLACEHOLDER;
 };
 
 const resetPhotoPreview = () => {
@@ -157,8 +143,6 @@ const resetPhotoPreview = () => {
   divElem.classList.add('ad-form__photo');
   photoContainer.append(divElem);
 };
-
-// валидация формы
 
 const setInvalidStyle = (element) => {
   return element.style.backgroundColor = 'salmon';
@@ -238,8 +222,6 @@ const validateTitle = () => {
   titleInput.reportValidity();
 };
 
-titleInput.addEventListener('input', validateTitle);
-
 const minValue = priceInput.min;
 const maxValue = priceInput.max;
 
@@ -257,10 +239,6 @@ const validatePrice = () => {
 
   priceInput.reportValidity();
 };
-
-priceInput.addEventListener('input', validatePrice);
-
-// отправка формы
 
 const onEscSuccessPopup = (evt) => {
   if (isEsc(evt)) {
@@ -342,6 +320,15 @@ const onSuccessSubmit = () => {
 const onErrorSubmit = () => {
   openErrorPopup();
 };
+
+housingTypeInput.addEventListener('change', onHousingTypeChange);
+timeInInput.addEventListener('change', onTimeInChange);
+timeOutInput.addEventListener('change', onTimeOutChange);
+roomNumberInput.addEventListener('change', onRoomNumberChange);
+avatarInput.addEventListener('change', onAvatarChange);
+photoInput.addEventListener('change', onPhotoChange);
+titleInput.addEventListener('input', validateTitle);
+priceInput.addEventListener('input', validatePrice);
 
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();

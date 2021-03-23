@@ -1,5 +1,7 @@
+const escKeyValues = ['Escape', 'Esc'];
+
 const isEsc = (evt) => {
-  return evt.key === ('Escape' || 'Esc');
+  return escKeyValues.some((code) => evt.key === code);
 };
 
 export { isEsc };
