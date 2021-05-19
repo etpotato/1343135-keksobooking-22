@@ -1,3 +1,7 @@
+https://etpotato.github.io/1343135-keksobooking-22/
+
+
+
 # Личный проект «Кексобукинг»
 
 * Студент: [Павел Мареев](https://up.htmlacademy.ru/javascript/22/user/1343135).
